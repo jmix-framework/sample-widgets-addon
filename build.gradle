@@ -1,0 +1,37 @@
+plugins {
+    id 'java'
+    id 'java-library'
+    id 'maven'
+}
+
+group 'com.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenLocal()
+    maven {
+        url System.getenv('HAULMONT_REPOSITORY_URL')
+        credentials {
+            username System.getenv('HAULMONT_REPOSITORY_USER')
+            password System.getenv('HAULMONT_REPOSITORY_PASSWORD')
+        }
+    }
+}
+
+dependencies {
+    api 'io.jmix.ui:jmix-ui:1.0-SNAPSHOT'
+
+    compileOnly 'io.jmix.ui-widgets:jmix-ui-widgets:1.0-SNAPSHOT'
+}
+
+jar {
+    // pack client Java sources
+    with copySpec {
+        from sourceSets.main.allJava
+        include "com/example/widgetsaddon/client/**"
+    }
+    // register exported widgetset
+    manifest {
+        attributes(['Vaadin-Widgetsets': 'com.example.widgetsaddon.WidgetsAddon'])
+    }
+}
